@@ -170,8 +170,7 @@ dependencies:
   flutter_slidable: ^3.1.0
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-
-
+```
 
 # HTTP Request
 
@@ -190,6 +189,7 @@ Uygulamanın videosu: [db.json](https://drive.google.com/file/d/1UnrFf9Vh_yrH0rT
   Terminali açın ve şu komutu çalıştırın:
   ```bash
   flutter pub add http
+
 
 
 
