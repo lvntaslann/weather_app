@@ -4,14 +4,24 @@
 A simple weather query application created using the OpenWeather API. The application allows users to search for weather information.
 
 ## Screenshots
-### Home Screen
-![Home Screen](/weather_app/screenshots/weatherhomepage.png)
 
-### Loading Screen
-![Loading Screen](/weather_app/screenshots/weatherappresultwait.png)
+<table align="center">
+  <tr>
+    <td align="center" style="width: 25%; padding: 10px;">
+      <img src="/weather_app/screenshots/weatherhomepage.png" alt="Home Screen" style="width: 100%; height: auto; max-width: 300px;">
+      <br><strong>Home Screen</strong>
+    </td>
+    <td align="center" style="width: 25%; padding: 10px;">
+      <img src="/weather_app/screenshots/weatherappresultwait.png" alt="Choose Screen" style="width: 100%; height: auto; max-width: 300px;">
+      <br><strong>Loading Screen</strong>
+    </td>
+    <td align="center" style="width: 25%; padding: 10px;">
+      <img src="/weather_app/screenshots/weatherappresult.png" alt="Questions Screen" style="width: 100%; height: auto; max-width: 200;">
+      <br><strong>Result Screen</strong>
+    </td>
 
-### Result Screen
-![Result Screen](/weather_app/screenshots/weatherappresult.png)
+  </tr>
+</table>
 
 ## Resources and Websites Used
 
