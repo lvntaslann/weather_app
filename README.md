@@ -1,4 +1,7 @@
-# Weather Aplication
+# Flutter example project
+
+
+## Weather Aplication
 
 ## Project Description
 A simple weather query application created using the OpenWeather API. The application allows users to search for weather information.
@@ -34,7 +37,7 @@ A simple weather query application created using the OpenWeather API. The applic
 
 - API Site: [OpenWeatherMap](https://openweathermap.org/)
 
-# TIC TAC TOE GAME
+## TIC TAC TOE GAME
 
 ## Project Description
 A simple tic tac toe game
@@ -60,7 +63,7 @@ A simple tic tac toe game
 </table>
 
 
-# Araç Fiyat Tahmin Uygulaması
+## Araç Fiyat Tahmin Uygulaması
 
 ## Proje Açıklaması
 Farklı araç modellerinin çeşitli özelliklerine dayanarak fiyatlarını tahmin eden basit bir araç fiyat tahmin uygulaması.
@@ -114,7 +117,7 @@ Farklı araç modellerinin çeşitli özelliklerine dayanarak fiyatlarını tahm
 Flask api ile kullanımı gerçekleştirildi model eğitim dosyasına ulaşmak isterseniz [repo linki](https://github.com/lvntaslann/car_price_predict_model).
 
 
-# Quiz App
+## Quiz App
 
 ## Project Description
 A simple quiz application about the four major football teams in the Turkish league.
@@ -152,7 +155,7 @@ A simple quiz application about the four major football teams in the Turkish lea
     ```
 
 
-# TO-DO APP
+## TO-DO APP
 
 This is a simple TO-DO app created using Flutter. The app allows users to create, update, and delete tasks. The main purpose is to illustrate that the saving process is performed using a local database, Hive.
 ## Video Demonstration
@@ -172,7 +175,7 @@ dependencies:
   hive_flutter: ^1.1.0
 ```
 
-# HTTP Request
+## HTTP Request
 
 BTK Akademi eğitimlerinden Engin DEMİROG tarafından hazırlanan Flutter eğitimindeki, HTTP ile bir JSON dosyasından veri getirme işleminin uygulama örneği. Verdiği bilgilerden dolayı Engin DEMİROG hocama teşekkür ederim.
 
@@ -193,7 +196,7 @@ Uygulamanın videosu: [db.json](https://drive.google.com/file/d/1UnrFf9Vh_yrH0rT
 
 
 
-# firebase_flutter
+## firebase_flutter
 
 BTK akademi üzerinden Google flutter ile mobil uygulama eğitimindeki flutter üzerinden firebase kullanımının bir örnek uygulaması.
 
