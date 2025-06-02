@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/person.dart';
+import '../../model/person.dart';
 
 class PersonPage extends StatelessWidget {
 const PersonPage({ Key? key }) : super(key: key);

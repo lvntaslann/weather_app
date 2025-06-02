@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_example/pages/product_page.dart';
+import 'package:flutter_example/pages/book/book_page.dart';
+import 'package:flutter_example/services/book_services.dart';
+import 'package:provider/provider.dart';
 void main() {
-  runApp(const MainApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => BookServices()),
+      ],
+      child: const MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
@@ -11,7 +20,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ProductPage()
+      home: BookPage(),
     );
   }
 }
