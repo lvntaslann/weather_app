@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../model/book.dart';
 import '../../services/book_services.dart';
+import '../../widget/add_update_book_dialog.dart';
 
 class BookPage extends StatelessWidget {
   BookPage({Key? key}) : super(key: key);
@@ -26,8 +27,12 @@ class BookPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => BookDetailPage(book: bookList[index])));
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              BookDetailPage(book: bookList[index])));
                 },
                 child: Container(
                   width: 300,
@@ -41,31 +46,36 @@ class BookPage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        bookList[index].title,
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        bookList[index].author,
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      Text(
-                        'Page Count: ${bookList[index].pageCount}',
-                        style: const TextStyle(fontSize: 14),
-                      ),
+                      Text(bookList[index].title,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      Text(bookList[index].author,
+                          style: const TextStyle(fontSize: 16)),
+                      Text('Page Count: ${bookList[index].pageCount}',
+                          style: const TextStyle(fontSize: 14)),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
                               onPressed: () {
-                                _showDialog(context, bookServices, true, index);
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AddOrUpdateBookDialog(
+                                    bookServices: bookServices,
+                                    isUpdate: true,
+                                    index: index,
+                                    existingTitle: bookList[index].title,
+                                    existingAuthor: bookList[index].author,
+                                    existingPageCount:
+                                        bookList[index].pageCount,
+                                  ),
+                                );
                               },
                               icon: Icon(Icons.edit)),
                           IconButton(
                             onPressed: () {
                               bookServices.deleteBookById(
-                                  bookList[index].id); // id gönderiliyor
+                                  bookList[index].id);
                             },
                             icon: Icon(Icons.delete),
                           ),
@@ -81,68 +91,18 @@ class BookPage extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async{
-           _showDialog(context, bookServices, false, -1);
-          
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => AddOrUpdateBookDialog(
+              bookServices: bookServices,
+              isUpdate: false,
+              index: -1,
+            ),
+          );
         },
         child: const Icon(Icons.add),
       ),
     );
-  }
-
-  Future<dynamic> _showDialog(BuildContext context, BookServices bookServices,
-      bool isUpdate, int index) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return Container(
-            padding: const EdgeInsets.all(20),
-            child: AlertDialog(
-              title: isUpdate ?Text("Update"): Text('Add New Appointment'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: booktitleController,
-                    decoration: const InputDecoration(labelText: 'Book title'),
-                  ),
-                  TextField(
-                    controller: bookauthorController,
-                    decoration: const InputDecoration(labelText: 'Book author'),
-                  ),
-                  TextField(
-                    controller: bookpageCountController,
-                    decoration:
-                        const InputDecoration(labelText: 'Pet pageCount'),
-                    keyboardType: TextInputType.number,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (isUpdate) {
-                        bookServices.updateBook(
-                          index,
-                          booktitleController.text,
-                          bookauthorController.text,
-                          int.parse(bookpageCountController.text),
-                         
-                        );
-                      } else {
-                        bookServices.addBook(
-                          booktitleController.text,
-                          bookauthorController.text,
-                          int.parse(bookpageCountController.text),
-                        );
-                      }
-                      booktitleController.clear();
-                      bookauthorController.clear();
-                       Navigator.pop(context);
-                    },
-                    child: isUpdate ? Text("Update"): Text('Add Appointment'),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
   }
 }
