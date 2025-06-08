@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'package:crypto_app/models/crypto_currency.dart';
+import 'package:crypto_app/pages/crypto_details_page.dart';
 import 'package:crypto_app/viewmodels/crypto_viewmodel.dart';
 import 'package:crypto_app/widgets/crypto_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,10 +19,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    final viewModel = Provider.of<CryptoViewmodel>(context, listen: false);
-    viewModel.fetchCryptos();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final viewModel = Provider.of<CryptoViewmodel>(context, listen: false);
+      viewModel.fetchCryptos();
+    });
 
     timer = Timer.periodic(Duration(seconds: 60), (_) {
+      final viewModel = Provider.of<CryptoViewmodel>(context, listen: false);
       viewModel.fetchCryptos();
     });
   }
@@ -51,13 +56,14 @@ class _HomePageState extends State<HomePage> {
                     final crypto = viewModel.cryptos[index];
                     return InkWell(
                       onTap: () {
-                        _showDialog(context, crypto);
+                        //_showDialog(context, crypto);
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>CryptoDetailsPage(crypto: crypto,)));
                       },
                       child: CryptoCard(
                         name: crypto.name,
                         symbol: crypto.symbol,
                         price: crypto.price.toStringAsFixed(2),
-                        percentChange: crypto.percentChange7d,
+                        percentChange: crypto.percentChange24h,
                       ),
                     );
                   },
@@ -110,13 +116,32 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Container _currentBalance(CryptoViewmodel viewModel) {
+  Widget _currentBalance(CryptoViewmodel viewModel) {
+    if (viewModel.cryptos.isEmpty) {
+      return Container(
+        height: 225,
+        width: 375,
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 30, 30, 30),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: Colors.white,
+          ),
+        ),
+      );
+    }
+
+    // Liste doluysa normal içerik göster
+    final crypto = viewModel.cryptos[0];
     return Container(
       width: 375,
       height: 225,
       decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 30, 30, 30),
-          borderRadius: BorderRadius.circular(10)),
+        color: const Color.fromARGB(255, 30, 30, 30),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Padding(
         padding: const EdgeInsets.only(left: 25, top: 16),
         child: Column(
@@ -127,18 +152,20 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   "Current Balance",
                   style: TextStyle(
-                      color: Colors.grey.shade400,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 22),
+                    color: Colors.grey.shade400,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 22,
+                  ),
                 ),
-                SizedBox(width: 120),
+                const SizedBox(width: 120),
                 Container(
                   width: 50,
                   height: 50,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: const Color.fromARGB(255, 61, 67, 70)),
-                  child: Icon(
+                    borderRadius: BorderRadius.circular(50),
+                    color: const Color.fromARGB(255, 61, 67, 70),
+                  ),
+                  child: const Icon(
                     Icons.currency_bitcoin,
                     color: Colors.yellowAccent,
                     size: 35,
@@ -147,55 +174,59 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             Text(
-              "\$${viewModel.cryptos[0].price}",
+              "\$${crypto.price}",
               style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold),
+                color: Colors.white,
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
               "Percent Change 24H",
               style: TextStyle(
-                  color: Colors.grey.shade400,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 22),
+                color: Colors.grey.shade400,
+                fontWeight: FontWeight.w500,
+                fontSize: 22,
+              ),
             ),
             Row(
               children: [
                 Text(
-                  "\$${viewModel.cryptos[0].percentChange24h}",
+                  "\$${crypto.percentChange24h}",
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 26,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                SizedBox(width: 170),
+                const SizedBox(width: 170),
                 Container(
                   width: 90,
                   height: 40,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      color: viewModel.cryptos[0].percentChange7d > 0
-                          ? Colors.green
-                          : Colors.red),
+                    borderRadius: BorderRadius.circular(30),
+                    color:
+                        crypto.percentChange24h > 0 ? Colors.green : Colors.red,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "(${viewModel.cryptos[0].percentChange7d})",
+                        "(${crypto.percentChange24h})",
                         style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold),
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       Icon(
-                        viewModel.cryptos[0].percentChange7d > 0
+                        crypto.percentChange1h > 0
                             ? Icons.trending_up
                             : Icons.trending_down,
                         color: Colors.white,
                         weight: 5,
-                      )
+                      ),
                     ],
                   ),
                 )
@@ -208,56 +239,112 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<dynamic> _showDialog(BuildContext context, Crypto crypto) {
+    final List<FlSpot> priceSpots = [
+      FlSpot(0, crypto.percentChange1h.toDouble()),
+      FlSpot(1, crypto.percentChange24h.toDouble()),
+      FlSpot(2, crypto.percentChange7d.toDouble()),
+    ];
+
     return showDialog(
       context: context,
       builder: (context) {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
-            width: 500,
-            height: 305,
+            width: MediaQuery.of(context).size.width * 0.9,
+            height: 500, // Increased height to accommodate content
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 color: Colors.grey.shade700),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      crypto.name,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 25,
-                          fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(crypto.symbol,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Crypto name and symbol
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        crypto.name,
                         style: const TextStyle(
                             color: Colors.white,
                             fontSize: 25,
-                            fontWeight: FontWeight.w600)),
-                  ],
-                ),
-                Text("7 Day Change: \$${crypto.percentChange7d}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600)),
-                Text("1 Hour Change: \$${crypto.percentChange1h}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600)),
-                Text("24 Hour Change: \$${crypto.percentChange24h}",
-                    style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25,
-                        fontWeight: FontWeight.w600)),
-              ],
+                            fontWeight: FontWeight.w600),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(crypto.symbol,
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 25,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                  // Chart
+                  SizedBox(
+                      height: 200, // Fixed height for chart
+                      child: LineChart(LineChartData(
+                        minX: 0,
+                        maxX: 2,
+                        minY: priceSpots
+                                .map((e) => e.y)
+                                .reduce((a, b) => a < b ? a : b) -
+                            2,
+                        maxY: priceSpots
+                                .map((e) => e.y)
+                                .reduce((a, b) => a > b ? a : b) +
+                            2,
+                        titlesData: FlTitlesData(
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              interval: 1,
+                              getTitlesWidget: (value, meta) {
+                                switch (value.toInt()) {
+                                  case 0:
+                                    return const Text("1h",
+                                        style: TextStyle(color: Colors.white));
+                                  case 1:
+                                    return const Text("24h",
+                                        style: TextStyle(color: Colors.white));
+                                  case 2:
+                                    return const Text("7d",
+                                        style: TextStyle(color: Colors.white));
+                                  default:
+                                    return const SizedBox.shrink();
+                                }
+                              },
+                            ),
+                          ),
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                        ),
+                        gridData: FlGridData(show: false),
+                        borderData: FlBorderData(show: false),
+                        lineBarsData: [
+                          LineChartBarData(
+                            spots: priceSpots,
+                            isCurved: true,
+                            barWidth: 3,
+                            color: Colors.yellowAccent,
+                            belowBarData: BarAreaData(
+                              show: true,
+                              color: Colors.yellowAccent.withOpacity(0.2),
+                            ),
+                            dotData: FlDotData(show: true),
+                          ),
+                        ],
+                      ))),
+                  // Price changes
+                  
+                ],
+              ),
             ),
           ),
         );
